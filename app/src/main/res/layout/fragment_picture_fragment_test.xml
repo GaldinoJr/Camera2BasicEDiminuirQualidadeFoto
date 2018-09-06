@@ -7,12 +7,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".pictureTest.PictureFragmentTest">
 
+    <TextView
+        android:id="@+id/tvOldSize"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="12dp"
+        />
+
+    <TextView
+        android:id="@+id/tvNewSize"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tvOldSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="12dp"
+        />
+
     <com.example.myapplication.cameraBasic.AutoFitTextureView
         android:id="@+id/autoFitTextureView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvNewSize"
+        app:layout_constraintBottom_toTopOf="@+id/btTakePicture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -34,8 +54,18 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btCompress"
         android:text="@string/take_picture"
+        />
+
+    <Button
+        android:id="@+id/btCompress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btTakePicture"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/compressPicture"
         />
 
     <ProgressBar
