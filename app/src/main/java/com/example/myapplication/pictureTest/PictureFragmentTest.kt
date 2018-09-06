@@ -9,13 +9,8 @@ import com.bumptech.glide.Glide
 import com.example.myapplication.R
 import com.example.myapplication.cameraBasic.AutoFitTextureView
 import com.example.myapplication.cameraBasic.Camera2BasicFragment
-import com.example.myapplication.utils.CompressPicture
+import com.example.myapplication.utils.CompressWhatsapp
 import kotlinx.android.synthetic.main.fragment_picture_fragment_test.*
-import java.io.File
-import android.graphics.Bitmap
-import android.R.attr.bitmap
-import java.io.BufferedOutputStream
-import java.io.FileOutputStream
 
 
 class PictureFragmentTest : Camera2BasicFragment(), Camera2BasicFragment.Listener
@@ -48,15 +43,18 @@ class PictureFragmentTest : Camera2BasicFragment(), Camera2BasicFragment.Listene
 
     private fun callCompressPicture()
     {
-        val byteArrayToBitmap = CompressPicture.byteArrayToBitmap(mByteArray)
-//        val byteArrayToFile = CompressPicture.byteArrayToFile(mByteArray)
-        val file = File("path")
-        val os = BufferedOutputStream(FileOutputStream(file))
-        byteArrayToBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
-        os.close()
+        context?.let {
+            val newByteArray = CompressWhatsapp.compressImage(it, mByteArray)
+            context?.let {
+                ivPreviewCompress.visibility = View.VISIBLE
+                Glide
+                        .with(it)
+                        .load(newByteArray)
+                        .into(ivPreviewCompress)
+            }
+            tvNewSize.text = "Tamanho novo: " + newByteArray.size
+        }
 
-        val decodeFile = CompressPicture.decodeFile(file)
-        tvNewSize.text = "Tamanho normal: " + decodeFile.length()
     }
 
     override fun textureView(): AutoFitTextureView? {

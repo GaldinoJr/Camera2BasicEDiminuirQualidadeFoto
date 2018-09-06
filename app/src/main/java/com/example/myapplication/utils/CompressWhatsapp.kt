@@ -7,18 +7,14 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-
+import java.io.*
 
 class CompressWhatsapp
 {
     companion object {
-        fun compressImage(context: Context, imageUri: String): String {
+        fun compressImage(context: Context, byteArray: ByteArray): ByteArray {
 
-            val filePath = getRealPathFromURI(context,imageUri)
+//            val filePath = getRealPathFromURI(context,byteArray)
             var scaledBitmap: Bitmap? = null
 
             val options = BitmapFactory.Options()
@@ -26,7 +22,7 @@ class CompressWhatsapp
             //      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
             //      you try the use the bitmap here, you will get null.
             options.inJustDecodeBounds = true
-            var bmp = BitmapFactory.decodeFile(filePath, options)
+            var bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size,options)
 
             var actualHeight = options.outHeight
             var actualWidth = options.outWidth
@@ -70,7 +66,7 @@ class CompressWhatsapp
 
             try {
                 //          load the bitmap from its path
-                bmp = BitmapFactory.decodeFile(filePath, options)
+                bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size,options)
             } catch (exception: OutOfMemoryError) {
                 exception.printStackTrace()
 
@@ -97,22 +93,37 @@ class CompressWhatsapp
             //      check the rotation of the image and display it properly
             val exif: ExifInterface
             try {
-                exif = ExifInterface(filePath)
-
-                val orientation = exif.getAttributeInt(
-                        ExifInterface.TAG_ORIENTATION, 0)
-                Log.d("EXIF", "Exif: $orientation")
+//                val bais = ByteArrayInputStream(byteArray)
+//                val buffer = ByteArray(bais.available())
+//                bais.read(buffer)
+//
+//                val filename = "targetFile.tmp"
+//                val targetFile = File(context.getExternalFilesDir(null), filename)
+//
+//                if (!targetFile.exists()) {
+//                    targetFile.mkdirs()
+//                }
+//
+//                val outStream = FileOutputStream(targetFile)
+//                outStream.write(buffer)
+//                exif = ExifInterface(targetFile.absolutePath)
+//
+//                val orientation = exif.getAttributeInt(
+//                        ExifInterface.TAG_ORIENTATION, 0)
+//                Log.d("EXIF", "Exif: $orientation")
+//                val matrix = Matrix()
+//                if (orientation == 6) {
+//                    matrix.postRotate(90F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                } else if (orientation == 3) {
+//                    matrix.postRotate(180F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                } else if (orientation == 8) {
+//                    matrix.postRotate(270F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                }
                 val matrix = Matrix()
-                if (orientation == 6) {
-                    matrix.postRotate(90F)
-                    Log.d("EXIF", "Exif: $orientation")
-                } else if (orientation == 3) {
-                    matrix.postRotate(180F)
-                    Log.d("EXIF", "Exif: $orientation")
-                } else if (orientation == 8) {
-                    matrix.postRotate(270F)
-                    Log.d("EXIF", "Exif: $orientation")
-                }
+                matrix.postRotate(270F)
                 scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                         scaledBitmap!!.width, scaledBitmap.height, matrix,
                         true)
@@ -120,19 +131,19 @@ class CompressWhatsapp
                 e.printStackTrace()
             }
 
-            var out: FileOutputStream? = null
-            val filename = getFilename()
-            try {
-                out = FileOutputStream(filename)
+//            var out: FileOutputStream? = null
+//            val filename = getFilename()
+//            try {
+//                out = FileOutputStream(filename)
+//
+//                //          write the compressed bitmap at the destination specified by filename.
+//                scaledBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, out)
+//
+//            } catch (e: FileNotFoundException) {
+//                e.printStackTrace()
+//            }
 
-                //          write the compressed bitmap at the destination specified by filename.
-                scaledBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, out)
-
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            }
-
-            return filename
+            return toBytesArray(scaledBitmap)
 
         }
 
@@ -174,6 +185,12 @@ class CompressWhatsapp
             }
 
             return inSampleSize
+        }
+
+        fun toBytesArray(resource: Bitmap?): ByteArray {
+            val stream = ByteArrayOutputStream()
+        resource?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            return stream.toByteArray()
         }
     }
 }
