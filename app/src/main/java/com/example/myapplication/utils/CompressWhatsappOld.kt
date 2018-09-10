@@ -8,16 +8,8 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import java.io.*
-import android.graphics.Bitmap
-import android.os.Build
 
-
-/**
- * Copy from
- * https://stackoverflow.com/questions/28424942/decrease-image-size-without-losing-its-quality-in-android
- */
-
-class CompressWhatsapp
+class CompressWhatsappOld
 {
     companion object {
         fun compressImage(context: Context, byteArray: ByteArray): ByteArray {
@@ -98,37 +90,46 @@ class CompressWhatsapp
             canvas.setMatrix(scaleMatrix)
             canvas.drawBitmap(bmp, middleX - bmp.width / 2, middleY - bmp.height / 2, Paint(Paint.FILTER_BITMAP_FLAG))
 
-
             //      check the rotation of the image and display it properly
             val exif: ExifInterface
             try {
-                val targetStream = ByteArrayInputStream(byteArray)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    exif = ExifInterface(targetStream)
-
-
-                    val orientation = exif.getAttributeInt(
-                            ExifInterface.TAG_ORIENTATION, 0)
-                    Log.d("EXIF", "Exif: $orientation")
-                    val matrix = Matrix()
-                    if (orientation == 6) {
-                        matrix.postRotate(90F)
-                        Log.d("EXIF", "Exif: $orientation")
-                    } else if (orientation == 3) {
-                        matrix.postRotate(180F)
-                        Log.d("EXIF", "Exif: $orientation")
-                    } else if (orientation == 8) {
-                        matrix.postRotate(270F)
-                        Log.d("EXIF", "Exif: $orientation")
-                    }
-                    scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                            scaledBitmap!!.width, scaledBitmap.height, matrix,
-                            true)
-                }
+//                val bais = ByteArrayInputStream(byteArray)
+//                val buffer = ByteArray(bais.available())
+//                bais.read(buffer)
+//
+//                val filename = "targetFile.tmp"
+//                val targetFile = File(context.getExternalFilesDir(null), filename)
+//
+//                if (!targetFile.exists()) {
+//                    targetFile.mkdirs()
+//                }
+//
+//                val outStream = FileOutputStream(targetFile)
+//                outStream.write(buffer)
+//                exif = ExifInterface(targetFile.absolutePath)
+//
+//                val orientation = exif.getAttributeInt(
+//                        ExifInterface.TAG_ORIENTATION, 0)
+//                Log.d("EXIF", "Exif: $orientation")
+//                val matrix = Matrix()
+//                if (orientation == 6) {
+//                    matrix.postRotate(90F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                } else if (orientation == 3) {
+//                    matrix.postRotate(180F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                } else if (orientation == 8) {
+//                    matrix.postRotate(270F)
+//                    Log.d("EXIF", "Exif: $orientation")
+//                }
+                val matrix = Matrix()
+                matrix.postRotate(270F)
+                scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                        scaledBitmap!!.width, scaledBitmap.height, matrix,
+                        true)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
 
 //            var out: FileOutputStream? = null
 //            val filename = getFilename()
@@ -136,14 +137,11 @@ class CompressWhatsapp
 //                out = FileOutputStream(filename)
 //
 //                //          write the compressed bitmap at the destination specified by filename.
-//                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
+//                scaledBitmap!!.compress(Bitmap.CompressFormat.JPEG, 80, out)
 //
 //            } catch (e: FileNotFoundException) {
 //                e.printStackTrace()
 //            }
-//
-//
-//            return filename
 
             return toBytesArray(scaledBitmap)
 
@@ -191,7 +189,7 @@ class CompressWhatsapp
 
         fun toBytesArray(resource: Bitmap?): ByteArray {
             val stream = ByteArrayOutputStream()
-            resource?.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+        resource?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             return stream.toByteArray()
         }
     }
