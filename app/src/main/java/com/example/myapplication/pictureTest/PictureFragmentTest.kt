@@ -1,5 +1,6 @@
 package com.example.myapplication.pictureTest
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -76,5 +77,9 @@ class PictureFragmentTest : Camera2BasicFragment(), Camera2BasicFragment.Listene
 
     override fun onTakePictureFailed(error: Int) {
         Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+    }
+
+    override fun getDirection(): Int{
+        return Configuration.ORIENTATION_LANDSCAPE
     }
 }
